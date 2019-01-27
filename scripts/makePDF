@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/bin/sh
+makePDF.py
 
-import os, sys
-cwd = os.getcwd()
-sys.path.append(cwd)
-
-from makePDF.main import make
-
-make()
+if [ $? -eq 0 ]; then
+    echo "All good! Exiting"
+    exit
+else
+    echo "Something went wrong, see any errors above for more details."
+    $SHELL
+fi
