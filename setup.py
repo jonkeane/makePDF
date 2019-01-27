@@ -21,7 +21,7 @@ setup(
     version = "0.2.5",
     classifiers = ['Development Status :: 1 - Planning',
                    'Intended Audience :: Developers'],
-    scripts = ['scripts/makePDF', 'scripts/makePDF.py'],
+    scripts = ['scripts/makePDF', 'scripts/make_PDF_python'],
     packages = ["makePDF"],
     package_dir = {"": "src"},
     include_package_data=True,
