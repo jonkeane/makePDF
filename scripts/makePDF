@@ -1,5 +1,5 @@
 #!/bin/sh
-makePDF.py
+make_PDF_python
 
 if [ $? -eq 0 ]; then
     echo "All good! Exiting"

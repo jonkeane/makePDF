@@ -1,4 +1,4 @@
-import sys, os, shutil, tempfile, shlex
+import sys, os, shutil, tempfile, shlex, subprocess
 from PIL import Image
 import img2pdf
 
@@ -15,7 +15,7 @@ def clear():
     else: 
         _ = os.system('clear') 
 
-def make_pdf_from_images(images, output):
+def make_pdf_from_images(images, output, letter = True):
     """
     Take images and make one pdf
     """
@@ -36,9 +36,15 @@ def make_pdf_from_images(images, output):
             images[i] = utils.remove_alpha(image, path)
             
     # test if output already exists?
+    letter_inpt = (img2pdf.mm_to_pt(215.9),img2pdf.mm_to_pt(279.4))
+    layout_fun = img2pdf.get_layout_fun(letter_inpt)
+    
     try:
         with open(output,"wb") as f:
-            f.write(img2pdf.convert(images))
+            if letter:
+                f.write(img2pdf.convert(images, layout_fun=layout_fun))
+            else:
+                f.write(img2pdf.convert(images))
     except:
         # remove all temp files
         [os.unlink(x) for x in temp_files]
@@ -64,6 +70,23 @@ def make(default_filename = "images.pdf"):
         # If there's just a folder, then add the default filename
         output = os.path.join(output[:-1], default_filename)
 
-    # ask to make 8.5/11 (default:yes)
+    # TODO: ask to make 8.5/11 (default:yes)?
+    # TODO: ask to OCR (default:yes)?
     
     make_pdf_from_images(files, output)
+    
+    ocr_my_pdf = utils.which("ocrmypdf")
+    if ocr_my_pdf is not None:
+        print("Starting OCR, this could take some time.")
+        _, temp_path = tempfile.mkstemp()
+        proc_code = subprocess.call([ocr_my_pdf, output, temp_path])
+        
+        # if successful, move the temp file over the output
+        if proc_code == 0:
+            os.rename(temp_path, output)
+        else:
+            # otherwise, remove the temp file.
+            os.unlink(temp_path)
+            m = "Something went wrong with the OCR process, but the PDF is created."
+            raise IOError(m)
+        

@@ -9,7 +9,7 @@ sys.path.insert(0, myPath + "/../src/makePDF/") # move to the src directory
 
 import utils
 
-class TestCLI(TestCase):
+class TestUtiles(TestCase):
     def test_has_alpha(self):
         assert utils.has_alpha('tests/images/travis-pride.png')
         assert not utils.has_alpha('tests/images/travis-pride-sans-alpha.png')
@@ -19,3 +19,10 @@ class TestCLI(TestCase):
         img = Image.open(new_image, 'r')
         assert img.mode != 'RGBA'
         os.unlink(new_image)
+
+    def test_which(self):
+        eless = utils.which("ls")
+        assert eless.endswith("ls")
+        
+        not_a_thing = utils.which("thisisntathing")
+        assert not_a_thing is None
